@@ -23,40 +23,16 @@ def input_pdf_text(uploaded_file):
 
 #Prompt Template
 input_prompt_template = """
-You are an expert in resume optimization for Applicant Tracking Systems (ATS). Given the following inputs:
+You are an expert in resume analysis and Applicant Tracking Systems (ATS). Your task is to analyze a given resume and a job description, calculate the ATS score, and predict the likelihood of the resume being shortlisted for the job. Your analysis should include:
 
-Resume: {text}
-Job Description: {jd}
-Your tasks are as follows:
-
-Calculate the ATS score by analyzing how well the resume matches the job description based on relevant keywords, skills, and experience.
-
-Suggest specific improvements to enhance the ATS score, including:
-
-Keywords to add or modify
-Skills to highlight
-Adjustments to work experience and formatting
-Return the ATS score along with clear and actionable suggestions that will help tailor the resume to better align with the job description.
+A breakdown of the ATS score, highlighting how well the resume aligns with the job description.
+Identification of any loopholes or gaps in the resume, including missing skills, keywords, or experience that may decrease the chances of shortlisting.
+Detailed suggestions for improving the resume to increase the chances of shortlisting, ensuring it aligns better with the job description.
+A prediction of the percentage chances of getting shortlisted based on the resume's alignment with the job description.
+Here is the resume: {text}
+Here is the job description: {jd}
 """
 
-input_prompt_template1 = """
-Hey, act as a highly advanced ATS (Applicant Tracking System) with expert knowledge across all IT domains, including but not limited to software engineering, data science, data analysis, big data engineering, cybersecurity, cloud computing, DevOps, AI/ML, and more. Your task is to evaluate the provided resume based on the given job description. The job market is highly competitive, so provide the best possible assistance to improve the resume. Assess the percentage match based on the job description, identify any missing skills, and provide a summary of the resume profile. Also, offer recommendations for improving the resume, including skill enhancements, experience relevance, and keyword optimization. Ensure high accuracy in the analysis.
-
-Resume: {text}
-Job Description: {jd}
-
-Respond with the evaluation in bullet points as follows:
-- **Job Description Match:** %
-- **Missing Skills:** [list of missing skills]
-- **Profile Summary:** [summary of the resume profile]
-- **Recommended Improvements:** [specific suggestions for enhancing the resume]
-- **Skill Proficiency Assessment:** [evaluation of listed skills]
-- **Experience Relevance:** [feedback on relevance of listed experience]
-- **Achievements and Metrics:** [suggestions for including achievements or metrics]
-- **Keywords Optimization:** [list of recommended keywords or phrases]
-- **Resume Formatting Suggestions:** [advice on formatting improvements]
-
-"""
 
 ## streamlit app
 st.title("ATS-Powered Resume Analyzer")
@@ -68,7 +44,8 @@ submit = st.button("Submit")
 if submit:
     if uploaded_file is not None and jd.strip():
         resume_text = input_pdf_text(uploaded_file)
-        st.write(resume_text)
+        #st.write(resume_text)
+        #st.write(jd)
         input_prompt = input_prompt_template.format(text=resume_text, jd=jd)
         response = get_response(input_prompt)
         st.write(response)

@@ -30,7 +30,7 @@ def extract_transcript_details(youtube_video_url):
         return transcript
 
     except Exception as e:
-        raise e
+        print("Can't do for this video, please try for another video")
 def generate_response(transcript_text):
     messages=[
     SystemMessage(content="Provide comprehensive and detailed notes based on the given document, focusing on key concepts, explanations, and examples. The notes should help college students not only understand the topics thoroughly but also prepare effectively for their exams. Ensure the content is organized, with clear headings, subheadings, bullet points, and concise explanations where necessary."),
@@ -42,9 +42,9 @@ def generate_response(transcript_text):
 st.title("YouTube Study Notes Generator")
 st.subheader("Effortlessly Generate Comprehensive Summarized Notes from YouTube Videos. Paste the Video Link Below to Get Started")
 youtube_link=st.text_input("Paste the Youtube Video url")
-if youtube_link:
-
-    if st.button("Submit"):
+submit = st.button("Submit")
+if submit:
+    if youtube_link:
         # Proceed only if the YouTube link is provided
         try:
             text = extract_transcript_details(youtube_link)
@@ -56,3 +56,4 @@ if youtube_link:
     else:
         # Show an error message if no link is provided
         st.error("Please paste a valid YouTube video URL to generate notes.")
+    

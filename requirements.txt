@@ -1,2 +1,4 @@
 PyPDF2
 fpdf
+youtube_transcript_api
+assemblyai

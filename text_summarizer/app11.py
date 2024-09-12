@@ -6,7 +6,7 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
-from fpdf import FPDF
+#from fpdf import FPDF
 import io
 
 load_dotenv()

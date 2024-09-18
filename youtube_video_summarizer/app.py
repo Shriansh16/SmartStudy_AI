@@ -17,7 +17,7 @@ def extract_transcript_details(youtube_video_url):
         video_id = parse_qs(parsed_url.query).get("v", [None])[0]
         
         if not video_id:
-            # Handle short links like https://youtu.be/VIDEO_ID
+              
             video_id = parsed_url.path.split('/')[-1]
 
         # Get the transcript

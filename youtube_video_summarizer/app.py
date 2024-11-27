@@ -3,7 +3,12 @@ from urllib.parse import urlparse, parse_qs
 import streamlit as st
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.document_loaders import PyPDFLoader
+from langchain.chains.summarize import load_summarize_chain
+from langchain.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage,SystemMessage
+from langchain.schema import Document 
 load_dotenv()   
 import os
 api_key=os.getenv("GROQ_API_KEY")
@@ -32,18 +37,49 @@ def extract_transcript_details(youtube_video_url):
     except Exception as e:
         print("Can't do for this video, please try for another video")
 def generate_response(transcript_text):
-    messages=[
-    SystemMessage(content="Provide comprehensive and detailed notes based on the given document, focusing on key concepts, explanations, and examples. The notes should help college students not only understand the topics thoroughly but also prepare effectively for their exams. Ensure the content is organized, with clear headings, subheadings, bullet points, and concise explanations where necessary."),
-    HumanMessage(content=f"document: {transcript_text}")
-     ]
-    response=llm.invoke(messages)
-    return response.content
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+    
+    # Wrap transcript in a Document object
+    document = Document(page_content=transcript_text)
+    
+    # Split the document
+    splits = text_splitter.split_documents([document])
+    
+    # Debugging: Uncomment to see splits
+    # st.write(splits)
+
+    chunks_prompt = """
+    Please summarize the below text:
+    Text: "{text}"
+    Summary:
+    """
+
+    map_prompt_template = PromptTemplate(input_variables=['text'], template=chunks_prompt)
+
+    final_prompt = '''
+    Provide comprehensive and detailed notes based on the given documents, focusing on key concepts, explanations, and examples. The notes should help college students not only understand the topics thoroughly but also prepare effectively for their exams. Ensure the content is organized, with clear headings, subheadings, bullet points, and concise explanations where necessary.
+    Documents: {text}
+    '''
+
+    final_prompt_template = PromptTemplate(input_variables=['text'], template=final_prompt)
+
+    summary_chain = load_summarize_chain(
+        llm=llm,
+        chain_type="map_reduce",
+        map_prompt=map_prompt_template,
+        combine_prompt=final_prompt_template,
+        verbose=True
+    )
+
+    output = summary_chain.run(splits)
+    return output
 
 st.title("YouTube Study Notes Generator")
 st.subheader("Effortlessly Generate Comprehensive Summarized Notes from YouTube Videos. Paste the Video Link Below to Get Started")
 youtube_link=st.text_input("Paste the Youtube Video url")
 submit = st.button("Submit")
 if submit:
+  with st.spinner("Processing..."):
     if youtube_link:
         # Proceed only if the YouTube link is provided
         try:

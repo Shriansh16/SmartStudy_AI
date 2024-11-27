@@ -16,7 +16,7 @@ from langchain.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder
 )
-from utils import *
+from chat_with_pdf.utils import *
 from openai import OpenAI
 load_dotenv()
 KEY = os.getenv("OPENAI_API_KEY")

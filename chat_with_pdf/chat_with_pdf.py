@@ -1,7 +1,8 @@
 import os
 import streamlit as st
 import re
-from langchain_chroma import Chroma
+import faiss
+from langchain.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from streamlit_chat import message
 from langchain.chains import ConversationChain
@@ -35,7 +36,7 @@ if uploaded_files:
         documents.extend(docs)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
     splits = text_splitter.split_documents(documents)
-    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+    vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
     retriever = vectorstore.as_retriever()
 
     # Initialize session state variables

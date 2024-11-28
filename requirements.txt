@@ -11,7 +11,7 @@ arxiv
 pymupdf
 langchain-text-splitters
 langchain-openai
-chromadb
+streamlit_chat
 sentence_transformers
 langchain_huggingface
 faiss-cpu

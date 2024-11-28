@@ -2,10 +2,7 @@ import os
 import streamlit as st
 import re
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.chat_models import ChatOpenAI
-from dotenv import load_dotenv
 from streamlit_chat import message
 from langchain.chains import ConversationChain
 from langchain_community.document_loaders import PyPDFLoader
@@ -17,14 +14,14 @@ from langchain.prompts import (
     MessagesPlaceholder
 )
 from chat_with_pdf.utils import *
-from openai import OpenAI
-load_dotenv()
-KEY = os.getenv("OPENAI_API_KEY")
-embeddings=OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-client = OpenAI(api_key=KEY)
+from langchain_groq import ChatGroq
+api_key1=st.secrets["GROQ_API_KEY"]
+embeddings=download_embeddings()
+llm=ChatGroq(groq_api_key=api_key1,model_name="llama3-8b-8192",temperature=0.6)
 st.title("Upload PDFs and Chat with Their Content")
 uploaded_files = st.file_uploader("Choose a PDF file", type="pdf", accept_multiple_files=True)
- ## Process uploaded  PDF's
+## Process uploaded  PDF's
+#if st.button('Submit'):
 if uploaded_files:
     documents=[]
     for uploaded_file in uploaded_files:
@@ -46,7 +43,7 @@ if uploaded_files:
         st.session_state['responses'] = ["Greetings! Please feel free to ask any questions related to the uploaded document."]
     if 'requests' not in st.session_state:
         st.session_state['requests'] = []
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=KEY,temperature=0.5)
+    
     # Initialize conversation memory
     if 'buffer_memory' not in st.session_state:
         st.session_state.buffer_memory = ConversationBufferWindowMemory(k=3, return_messages=True)
@@ -74,7 +71,7 @@ if uploaded_files:
                refined_query = re.sub(r'(?i)irrelevant', '', refined_query)
                refined_query = re.sub(r'(?i)Refined question:', '', refined_query)
                #refined_query=refined_query+" "+user_query   
-               st.write(refined_query)
+               #st.write(refined_query)
                #st.write(conversation_string)
                context = retriever.get_relevant_documents(refined_query,k=5)
                response = conversation.predict(input=f"Context:\n{context}\n\nQuery:\n{user_query}")

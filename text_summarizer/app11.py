@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts import PromptTemplate
@@ -9,8 +8,7 @@ from langchain_groq import ChatGroq
 #from fpdf import FPDF
 import io
 
-load_dotenv()
-api_key=os.getenv("GROQ_API_KEY")
+api_key=st.secrets["GROQ_API_KEY"]
 llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 

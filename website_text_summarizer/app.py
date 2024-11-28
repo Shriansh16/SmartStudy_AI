@@ -5,14 +5,12 @@ import streamlit as st
 from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
 from langchain.chains.summarize import load_summarize_chain
-from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema import Document 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # Load environment variables
-load_dotenv()
 
 # A class to represent a Webpage
 class Website:
@@ -38,7 +36,7 @@ def get_all_details(url):
     return page.get_contents()
 
 # Load LLM
-api_key = os.getenv("GROQ_API_KEY")
+api_key = st.secrets["GROQ_API_KEY"]
 llm = ChatGroq(groq_api_key=api_key, model="llama3-8b-8192", temperature=0.5)
 
 # Streamlit UI

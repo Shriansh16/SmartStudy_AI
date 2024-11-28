@@ -1,18 +1,15 @@
 import os
 import streamlit as st
 import PyPDF2 as pdf
-from openai import OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-#genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage,SystemMessage
+api_key=st.secrets["GROQ_API_KEY"]
+llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 def get_response(input):
-    response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[{"role": "user", "content": input}] ,
-    n=1
-    )
-    
-    return response.choices[0].message.content
+    messages=[{"role": "user", "content": input}]
+    response=llm.invoke(messages)
+    return response.content
 def input_pdf_text(uploaded_file):
     reader=pdf.PdfReader(uploaded_file)
     text=""

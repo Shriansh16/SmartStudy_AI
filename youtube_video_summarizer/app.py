@@ -1,17 +1,15 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
 import streamlit as st
-from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage,SystemMessage
-from langchain.schema import Document 
-load_dotenv()   
+from langchain.schema import Document  
 import os
-api_key=os.getenv("GROQ_API_KEY")
+api_key=st.secrets["GROQ_API_KEY"]
 llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 

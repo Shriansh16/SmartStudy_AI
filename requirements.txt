@@ -11,7 +11,8 @@ arxiv
 pymupdf
 langchain-text-splitters
 langchain-openai
-chromadb>=0.3.25  # Requires SQLite >= 3.35.0
+chromadb
+pysqlite3==3.35.0 
 sentence_transformers
 langchain_huggingface
 faiss-cpu

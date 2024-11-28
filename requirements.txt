@@ -11,7 +11,7 @@ arxiv
 pymupdf
 langchain-text-splitters
 langchain-openai
-chromadb
+chromadb>=0.3.25  # Requires SQLite >= 3.35.0
 sentence_transformers
 langchain_huggingface
 faiss-cpu
@@ -22,6 +22,5 @@ langchain-groq
 langchain_core
 uvicorn
 validators==0.28.1
-youtube_transcript_api
 unstructured
 huggingface_hub

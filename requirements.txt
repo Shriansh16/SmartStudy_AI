@@ -12,7 +12,6 @@ pymupdf
 langchain-text-splitters
 langchain-openai
 chromadb
-sqlite3
 sentence_transformers
 langchain_huggingface
 faiss-cpu

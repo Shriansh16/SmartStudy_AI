@@ -24,5 +24,4 @@ uvicorn
 validators==0.28.1
 unstructured
 huggingface_hub
-groq --upgrade
-langchain-groq --upgrade
+groq

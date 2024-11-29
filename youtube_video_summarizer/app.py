@@ -29,6 +29,7 @@ def extract_transcript_details(youtube_video_url):
         transcript = ""
         for i in transcript_text:
             transcript += " " + i["text"]
+        st.write(transcript)
 
         return transcript
 

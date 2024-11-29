@@ -18,7 +18,7 @@ faiss-cpu
 langchain_chroma
 pandas
 openai
-langchain-groq
+langchain-groq==0.2.1
 langchain_core
 uvicorn
 validators==0.28.1

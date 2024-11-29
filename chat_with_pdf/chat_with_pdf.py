@@ -18,16 +18,7 @@ from chat_with_pdf.utils import *
 from langchain_groq import ChatGroq
 api_key1=st.secrets["GROQ_API_KEY"]
 embeddings=download_embeddings()
-class CustomChatGroq(ChatGroq):
-    def __init__(self, *args, **kwargs):
-        # Remove the proxies argument
-        kwargs.pop('proxies', None)
-        
-        # Call the original __init__ method
-        super().__init__(*args, **kwargs)
-
-llm = CustomChatGroq(groq_api_key=api_key, model="llama-3.1-70b-versatile", temperature=0.5)
-#llm=ChatGroq(groq_api_key=api_key1,model_name="llama3-8b-8192",temperature=0.6)
+llm=ChatGroq(groq_api_key=api_key1,model_name="llama3-8b-8192",temperature=0.6)
 st.title("Upload PDFs and Chat with Their Content")
 uploaded_files = st.file_uploader("Choose a PDF file", type="pdf", accept_multiple_files=True)
 ## Process uploaded  PDF's

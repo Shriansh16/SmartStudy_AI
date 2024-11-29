@@ -10,16 +10,8 @@ from langchain_core.messages import HumanMessage,SystemMessage
 from langchain.schema import Document  
 import os
 api_key=st.secrets["GROQ_API_KEY"]
-class CustomChatGroq(ChatGroq):
-    def __init__(self, *args, **kwargs):
-        # Remove the proxies argument
-        kwargs.pop('proxies', None)
-        
-        # Call the original __init__ method
-        super().__init__(*args, **kwargs)
 
-llm = CustomChatGroq(groq_api_key=api_key, model="llama-3.1-70b-versatile", temperature=0.5)
-#llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
+llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 
 def extract_transcript_details(youtube_video_url):

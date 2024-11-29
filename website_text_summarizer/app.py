@@ -37,17 +37,16 @@ def get_all_details(url):
 
 # Load LLM
 api_key = st.secrets["GROQ_API_KEY"]
-original_init = ChatGroq.__init__
+class CustomChatGroq(ChatGroq):
+    def __init__(self, *args, **kwargs):
+        # Remove the proxies argument
+        kwargs.pop('proxies', None)
+        
+        # Call the original __init__ method
+        super().__init__(*args, **kwargs)
 
-def patched_client_init(self, *args, **kwargs):
-    # Remove the proxies argument
-    kwargs.pop('proxies', None)
-    
-    # Call the original __init__ method
-    original_init(self, *args, **kwargs)
-
-ChatGroq.__init__ = patched_client_init
-llm = ChatGroq(groq_api_key=api_key, model="llama3-8b-8192", temperature=0.5)
+llm = CustomChatGroq(groq_api_key=api_key, model="llama-3.1-70b-versatile", temperature=0.5)
+#llm = ChatGroq(groq_api_key=api_key, model="llama3-8b-8192", temperature=0.5)
 
 # Streamlit UI
 st.title("Website Study Notes Generator")

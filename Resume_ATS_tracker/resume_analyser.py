@@ -4,17 +4,18 @@ import PyPDF2 as pdf
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage,SystemMessage
 api_key=st.secrets["GROQ_API_KEY"]
-original_init = ChatGroq.__init__
 
-def patched_client_init(self, *args, **kwargs):
-    # Remove the proxies argument
-    kwargs.pop('proxies', None)
-    
-    # Call the original __init__ method
-    original_init(self, *args, **kwargs)
 
-ChatGroq.__init__ = patched_client_init
-llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
+class CustomChatGroq(ChatGroq):
+    def __init__(self, *args, **kwargs):
+        # Remove the proxies argument
+        kwargs.pop('proxies', None)
+        
+        # Call the original __init__ method
+        super().__init__(*args, **kwargs)
+
+llm = CustomChatGroq(groq_api_key=api_key, model="llama-3.1-70b-versatile", temperature=0.5)
+#llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 def get_response(input):
     messages=[{"role": "user", "content": input}]

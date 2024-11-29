@@ -36,10 +36,6 @@ def extract_transcript_details(youtube_video_url):
     except Exception as e:
         print("Can't do for this video, please try for another video")
 def generate_response(transcript_text):
-    # Ensure transcript_text is a string and not None
-    if not isinstance(transcript_text, str) or not transcript_text.strip():
-        raise ValueError("The transcript text is empty or invalid. Please provide a valid input.")
-
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
     
     # Wrap transcript in a Document object
@@ -76,7 +72,6 @@ def generate_response(transcript_text):
 
     output = summary_chain.run(splits)
     return output
-
 
 st.title("YouTube Study Notes Generator")
 st.subheader("Effortlessly Generate Comprehensive Summarized Notes from YouTube Videos. Paste the Video Link Below to Get Started")

@@ -18,17 +18,15 @@ from chat_with_pdf.utils import *
 from langchain_groq import ChatGroq
 api_key1=st.secrets["GROQ_API_KEY"]
 embeddings=download_embeddings()
+original_init = ChatGroq.__init__
+
 def patched_client_init(self, *args, **kwargs):
-    """
-    Patched __init__ method for langchain_groq.Client to accept the proxies argument.
-    """
     # Remove the proxies argument
     kwargs.pop('proxies', None)
     
     # Call the original __init__ method
-    self.__class__.__orig_init__(self, *args, **kwargs)
+    original_init(self, *args, **kwargs)
 
-ChatGroq.__orig_init__ = ChatGroq.__init__
 ChatGroq.__init__ = patched_client_init
 llm=ChatGroq(groq_api_key=api_key1,model_name="llama3-8b-8192",temperature=0.6)
 st.title("Upload PDFs and Chat with Their Content")

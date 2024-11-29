@@ -41,9 +41,13 @@ def patched_client_init(self, *args, **kwargs):
     """
     Patched __init__ method for langchain_groq.Client to accept the proxies argument.
     """
-    # Call the original __init__ method without the proxies argument
-    super(ChatGroq, self).__init__(*args, **kwargs)
+    # Remove the proxies argument
+    kwargs.pop('proxies', None)
+    
+    # Call the original __init__ method
+    self.__class__.__orig_init__(self, *args, **kwargs)
 
+ChatGroq.__orig_init__ = ChatGroq.__init__
 ChatGroq.__init__ = patched_client_init
 llm = ChatGroq(groq_api_key=api_key, model="llama3-8b-8192", temperature=0.5)
 

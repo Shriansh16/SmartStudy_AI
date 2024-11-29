@@ -10,7 +10,7 @@ import io
 
 #api_key=st.secrets["GROQ_API_KEY"]
 api_key=st.secrets["GROQ_API_KEY"]
-def patched_client_init(self, *args, proxies=None, **kwargs):
+def patched_client_init(self, *args, **kwargs):
     """
     Patched __init__ method for langchain_groq.Client to accept the proxies argument.
     """

@@ -10,6 +10,14 @@ import io
 
 #api_key=st.secrets["GROQ_API_KEY"]
 api_key=st.secrets["GROQ_API_KEY"]
+def patched_client_init(self, *args, proxies=None, **kwargs):
+    """
+    Patched __init__ method for langchain_groq.Client to accept the proxies argument.
+    """
+    # Call the original __init__ method without the proxies argument
+    super(ChatGroq, self).__init__(*args, **kwargs)
+
+ChatGroq.__init__ = patched_client_init
 llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
 
 

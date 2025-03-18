@@ -11,7 +11,7 @@ import io
 #api_key=st.secrets["GROQ_API_KEY"]
 api_key=st.secrets["GROQ_API_KEY"]
 
-llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
+llm=ChatGroq(groq_api_key=api_key,model="llama-3.3-70b-versatile",temperature=0.5)
 
 
 st.title("PDF SmartNotes")

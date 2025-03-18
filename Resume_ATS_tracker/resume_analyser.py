@@ -7,7 +7,7 @@ api_key=st.secrets["GROQ_API_KEY"]
 
 
 
-llm=ChatGroq(groq_api_key=api_key,model="llama-3.1-70b-versatile",temperature=0.5)
+llm=ChatGroq(groq_api_key=api_key,model="llama-3.3-70b-versatile",temperature=0.5)
 
 def get_response(input):
     messages=[{"role": "user", "content": input}]

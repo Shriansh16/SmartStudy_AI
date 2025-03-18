@@ -38,7 +38,7 @@ def get_all_details(url):
 # Load LLM
 api_key = st.secrets["GROQ_API_KEY"]
 
-llm = ChatGroq(groq_api_key=api_key, model="llama3-8b-8192", temperature=0.5)
+llm = ChatGroq(groq_api_key=api_key, model="llama-3.1-8b-instant", temperature=0.5)
 
 # Streamlit UI
 st.title("Website Study Notes Generator")

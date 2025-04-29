@@ -16,26 +16,21 @@ llm=ChatGroq(groq_api_key=api_key,model="llama-3.3-70b-versatile",temperature=0.
 
 def extract_transcript_details(youtube_video_url):
     try:
-        # Extract the video ID properly, handling different URL formats
         parsed_url = urlparse(youtube_video_url)
         video_id = parse_qs(parsed_url.query).get("v", [None])[0]
-        
+
         if not video_id:
-              
             video_id = parsed_url.path.split('/')[-1]
 
-        # Get the transcript
         transcript_text = YouTubeTranscriptApi.get_transcript(video_id)
 
-        transcript = ""
-        for i in transcript_text:
-            transcript += " " + i["text"]
-        #st.write(transcript)
-
+        transcript = " ".join([i["text"] for i in transcript_text])
         return transcript
 
     except Exception as e:
-        print("Can't do for this video, please try for another video")
+        st.warning("Transcript could not be retrieved. This may be due to captions being unavailable for the video.")
+        return None
+
 def generate_response(transcript_text):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
     
@@ -79,17 +74,19 @@ st.subheader("Effortlessly Generate Comprehensive Summarized Notes from YouTube 
 youtube_link=st.text_input("Paste the Youtube Video url")
 submit = st.button("Submit")
 if submit:
-  with st.spinner("Processing..."):
-    if youtube_link:
-        # Proceed only if the YouTube link is provided
-        try:
-            text = extract_transcript_details(youtube_link)
-            summary = generate_response(text)
-            st.markdown("## Detailed Notes:")
-            st.write(summary)
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
-    else:
-        # Show an error message if no link is provided
-        st.error("Please paste a valid YouTube video URL to generate notes.")
+    with st.spinner("Processing..."):
+        if youtube_link:
+            try:
+                text = extract_transcript_details(youtube_link)
+                if not text:
+                    st.error("No transcript found. Please try another video with available captions.")
+                else:
+                    summary = generate_response(text)
+                    st.markdown("## Detailed Notes:")
+                    st.write(summary)
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+        else:
+            st.error("Please paste a valid YouTube video URL to generate notes.")
+
     

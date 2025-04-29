@@ -46,7 +46,7 @@ st.subheader("Effortlessly Generate Comprehensive Summarized Notes from Website 
 website_link = st.text_input("Paste the Website URL")
 
 def generate_response(text):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100,length_function=len)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
     
     # Wrap transcript in a Document object
     document = Document(page_content=text)

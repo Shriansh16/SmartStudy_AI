@@ -2,23 +2,8 @@ import os
 import streamlit as st
 from openai import OpenAI
 from langchain.document_loaders import PyPDFLoader
-from sentence_transformers import SentenceTransformer
-from langchain.embeddings import HuggingFaceEmbeddings
 from groq import Groq
 
-import pickle
-
-def download_embeddings():
-    embedding_path = "local_embeddings"
-
-    if os.path.exists(embedding_path):
-        with open(embedding_path, 'rb') as f:
-            embedding = pickle.load(f)
-    else:
-        embedding = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-        with open(embedding_path, 'wb') as f:
-            pickle.dump(embedding, f)
-    return embedding
 
 def query_refiner(conversation, query):
   #  if not conversation or not query:

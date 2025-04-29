@@ -14,10 +14,11 @@ from langchain.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder
 )
+from langchain.embeddings import OpenAIEmbeddings
 from chat_with_pdf.utils import *
 from langchain_groq import ChatGroq
 api_key1=st.secrets["GROQ_API_KEY"]
-embeddings=download_embeddings()
+embeddings=OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"])
 llm=ChatGroq(groq_api_key=api_key1,model_name="llama3-8b-8192",temperature=0.6)
 st.title("Upload PDFs and Chat with Their Content")
 uploaded_files = st.file_uploader("Choose a PDF file", type="pdf", accept_multiple_files=True)

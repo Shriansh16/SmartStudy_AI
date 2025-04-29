@@ -5,12 +5,11 @@ import streamlit as st
 from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
 from langchain.chains.summarize import load_summarize_chain
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain.schema import Document 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Load environment variables
+# Streamlit page configuration
+st.set_page_config(page_title="Website Study Notes Generator", layout="centered")
 
 # A class to represent a Webpage
 class Website:
@@ -38,40 +37,56 @@ def get_all_details(url):
 # Load LLM
 api_key = st.secrets["GROQ_API_KEY"]
 
-llm = ChatGroq(groq_api_key=api_key, model="llama-3.1-8b-instant", temperature=0.5)
+llm = ChatGroq(
+    groq_api_key=api_key,
+    model="llama-3.1-8b-instant",
+    temperature=0.5,
+)
 
 # Streamlit UI
-st.title("Website Study Notes Generator")
-st.subheader("Effortlessly Generate Comprehensive Summarized Notes from Website Articles. Paste the Website Link Below to Get Started")
+st.title("📚 Website Study Notes Generator")
+st.subheader("Effortlessly generate comprehensive summarized notes from website articles.\nPaste the Website Link below to get started!")
+
 website_link = st.text_input("Paste the Website URL")
 
 def generate_response(text):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=2000,
+        chunk_overlap=100,
+        length_function=len,  # ✅ Fix to avoid GPT-2 tokenizer problem
+    )
     
     # Wrap transcript in a Document object
     document = Document(page_content=text)
     
     # Split the document
     splits = text_splitter.split_documents([document])
-    
-    # Debugging: Uncomment to see splits
-    #st.write(splits)
 
+    # Create prompts
     chunks_prompt = """
     Please summarize the below text:
     Text: "{text}"
     Summary:
     """
 
-    map_prompt_template = PromptTemplate(input_variables=['text'], template=chunks_prompt)
+    map_prompt_template = PromptTemplate(
+        input_variables=['text'],
+        template=chunks_prompt
+    )
 
     final_prompt = '''
-    Provide comprehensive and detailed notes based on the given documents, focusing on key concepts, explanations, and examples. The notes should help college students not only understand the topics thoroughly but also prepare effectively for their exams. Ensure the content is organized, with clear headings, subheadings, bullet points, and concise explanations where necessary.
+    Provide comprehensive and detailed notes based on the given documents, focusing on key concepts, explanations, and examples.
+    The notes should help college students not only understand the topics thoroughly but also prepare effectively for their exams.
+    Ensure the content is organized, with clear headings, subheadings, bullet points, and concise explanations where necessary.
     Documents: {text}
     '''
 
-    final_prompt_template = PromptTemplate(input_variables=['text'], template=final_prompt)
+    final_prompt_template = PromptTemplate(
+        input_variables=['text'],
+        template=final_prompt
+    )
 
+    # Load summarize chain
     summary_chain = load_summarize_chain(
         llm=llm,
         chain_type="map_reduce",
@@ -80,18 +95,18 @@ def generate_response(text):
         verbose=True
     )
 
+    # Run summarization
     output = summary_chain.run(splits)
     return output
-
 
 if st.button("Summarize the Content"):
     if website_link:
         with st.spinner("Processing..."):
             try:
                 webpage_details = get_all_details(website_link)
-                webpage_details=str(webpage_details)
-                summary = generate_response(webpage_details)
-                st.markdown("## Detailed Notes:")
+                webpage_details_text = webpage_details["text"]  # Only pass the text part
+                summary = generate_response(webpage_details_text)
+                st.markdown("## 📝 Detailed Notes:")
                 st.write(summary)
             except Exception as e:
                 st.error(f"An error occurred: {e}")

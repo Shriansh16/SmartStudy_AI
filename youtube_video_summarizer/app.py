@@ -9,6 +9,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage,SystemMessage
 from langchain.schema import Document  
 import os
+import re
 api_key=st.secrets["GROQ_API_KEY"]
 
 llm=ChatGroq(groq_api_key=api_key,model="llama-3.3-70b-versatile",temperature=0.5)

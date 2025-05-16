@@ -13,29 +13,34 @@ api_key=st.secrets["GROQ_API_KEY"]
 
 llm=ChatGroq(groq_api_key=api_key,model="llama-3.3-70b-versatile",temperature=0.5)
 
+def extract_youtube_video_id(url):
+    """
+    Extract YouTube video ID from different URL formats
+    """
+    patterns = [
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)',
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^?&]+)',
+        r'(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&]+)'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
 
-def extract_transcript_details(youtube_video_url):
+def extract_transcript_details(video_id):
+    """
+    Retrieve YouTube video transcript
+    """
     try:
-        # Extract the video ID properly, handling different URL formats
-        parsed_url = urlparse(youtube_video_url)
-        video_id = parse_qs(parsed_url.query).get("v", [None])[0]
-        
-        if not video_id:
-              
-            video_id = parsed_url.path.split('/')[-1]
-
-        # Get the transcript
-        transcript_text = YouTubeTranscriptApi.get_transcript(video_id)
-
-        transcript = ""
-        for i in transcript_text:
-            transcript += " " + i["text"]
-        #st.write(transcript)
-
-        return transcript
-
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        # Combine transcript texts, limit to prevent overwhelming the model
+        full_transcript = ' '.join([entry['text'] for entry in transcript])
+        return full_transcript  
     except Exception as e:
-        print("Can't do for this video, please try for another video")
+        st.error(f"Error retrieving transcript: {e}")
+        return None
 def generate_response(transcript_text):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
     
@@ -83,7 +88,8 @@ if submit:
     if youtube_link:
         # Proceed only if the YouTube link is provided
         try:
-            text = extract_transcript_details(youtube_link)
+            video_id = extract_youtube_video_id(youtube_link)
+            text = extract_transcript_details(video_id)
             summary = generate_response(text)
             st.markdown("## Detailed Notes:")
             st.write(summary)
